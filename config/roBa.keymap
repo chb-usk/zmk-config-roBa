@@ -10,7 +10,7 @@
 
 &trackball {
     automouse-layer = <6>;
-    scroll-layers = <5>;
+    scroll-layers = <7>;
 
     // arrows {
     //     layers = <3>;
