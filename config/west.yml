@@ -16,6 +16,6 @@ manifest:
       revision: main
     - name: prospector-zmk-module
       remote: happy-ryo
-      revision: fix/battery-bar-display-A-character
+      revision: main
   self:
     path: config
