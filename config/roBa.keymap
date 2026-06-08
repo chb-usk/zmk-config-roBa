@@ -3,25 +3,12 @@
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
 
+/* scroll-layers is set in roBa_R.overlay (dongle-less) only.
+ * In dongle mode the dongle handles layer switching via input-processor-temp-layer. */
+
 &mt {
     flavor = "balanced";
     quick-tap-ms = <0>;
-};
-
-&trackball {
-    scroll-layers = <7>;
-
-    // arrows {
-    //     layers = <3>;
-    //     bindings =
-    //         <&kp RIGHT_ARROW>,
-    //         <&kp LEFT_ARROW>,
-    //         <&kp UP_ARROW>,
-    //         <&kp DOWN_ARROW>;
-    //     tick = <10>;
-    //     wait-ms = <5>;
-    //     tap-ms = <5>;
-    // };
 };
 
 / {
@@ -79,6 +66,7 @@
         compatible = "zmk,keymap";
 
         mac {
+            label = "Default";
             bindings = <
 &kp Q             &kp W             &kp E         &kp R                        &kp T                                        &kp Y                         &kp U  &kp I      &kp O    &kp P
 &kp A             &kp S             &kp D         &kp F                        &kp G        &trans             &kp SEMI     &kp H                         &kp J  &kp K      &kp L    &kp MINUS
@@ -90,6 +78,7 @@
         };
 
         win {
+            label = "Win";
             bindings = <
 &kp Q             &kp W             &kp E         &kp R                        &kp T                                        &kp Y                         &kp U  &kp I      &kp O    &kp P
 &kp A             &kp S             &kp D         &kp F                        &kp G        &trans             &kp SEMI     &kp H                         &kp J  &kp K      &kp L    &kp MINUS
@@ -101,6 +90,7 @@
         };
 
         symbol {
+            label = "Symbol";
             bindings = <
 &kp LS(NUMBER_1)  &kp LS(NUMBER_2)  &kp LS(NUMBER_3)  &kp LS(NUMBER_4)  &kp LS(NUMBER_5)                      &kp LS(NUMBER_6)  &kp LS(NUMBER_7)  &kp LS(NUMBER_8)  &kp LS(N9)  &kp LS(N0)
 &kp ESC           &trans            &trans            &trans            &trans            &trans      &trans  &kp MINUS         &kp EQUAL         &kp LBKT          &kp RBKT    &kp BSLH
@@ -110,6 +100,7 @@
         };
 
         number {
+            label = "Number";
             bindings = <
 &kp F1   &kp F2   &kp F3   &kp F4   &kp F5                        &kp N1  &kp N2  &kp N3  &trans     &trans
 &kp F6   &kp F7   &kp F8   &kp F9   &kp F10  &trans      &trans   &kp N4  &kp N5  &kp N6  &kp PLUS   &kp MINUS
@@ -119,6 +110,7 @@
         };
 
         move {
+            label = "Move";
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &kp LG(LEFT)   &kp HOME  &kp UP    &kp END    &kp PG_UP
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp LG(RIGHT)  &kp LEFT  &kp DOWN  &kp RIGHT  &kp PG_DN
@@ -130,6 +122,7 @@
         };
 
         bluetooth {
+            label = "Bluetooth";
             bindings = <
 &trans      &BT0Mac  &BT1Mac  &BT2Win  &BT3Win                      &trans  &trans  &trans  &trans  &trans
 &trans      &trans   &trans   &trans   &trans   &trans      &trans  &trans  &trans  &trans  &trans  &trans
@@ -139,6 +132,7 @@
         };
 
         MOUSE {
+            label = "Mouse";
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &kp PAGE_UP           &trans    &kp PAGE_DOWN  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1              &mkp MB3  &mkp MB2       &mo 7
@@ -148,6 +142,7 @@
         };
 
         SCROLL {
+            label = "Scroll";
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans

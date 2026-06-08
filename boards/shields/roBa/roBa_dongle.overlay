@@ -1,0 +1,53 @@
+/* roBa Dongle — Central role (Prospector / XIAO BLE dongle)
+ *
+ * No physical keys: uses zmk,kscan-mock.
+ * Receives trackball input from roBa_R_dongle peripheral via zmk,input-split (reg=0).
+ * Applies scaler + auto-mouse layer (temp-layer) logic here on the central.
+ */
+#include "roBa.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+/ {
+    chosen {
+        zmk,kscan = &mock_kscan;
+    };
+
+    mock_kscan: mock_kscan_0 {
+        compatible = "zmk,kscan-mock";
+        columns = <0>;
+        rows = <0>;
+        events = <0>;
+    };
+
+    tb_scaler: tb_scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_X INPUT_REL_Y>;
+        track-remainders;
+    };
+
+    tb_temp_layer: tb_temp_layer {
+        compatible = "zmk,input-processor-temp-layer";
+        #input-processor-cells = <2>;
+        excluded-positions = <6 8 18 19 20 21 30 32>;
+    };
+};
+
+/* Disable the GPIO-matrix kscan (no physical keys on dongle) */
+&kscan0 { status = "disabled"; };
+
+/* Redirect physical layout kscan so ZMK / Studio uses the mock kscan */
+&roba_physical_layout { kscan = <&mock_kscan>; };
+
+/* Receive trackball data forwarded from the right peripheral */
+&tb_split {
+    status = "okay";
+};
+
+/* Enable listener on dongle: scale movement then auto-activate MOUSE layer (6) */
+&trackball_listener {
+    status = "okay";
+    device = <&tb_split>;
+    input-processors = <&tb_scaler 2 1>, <&tb_temp_layer 6 5000>;
+};
