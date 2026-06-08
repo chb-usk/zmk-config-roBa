@@ -81,7 +81,7 @@
         mac {
             bindings = <
 &kp Q             &kp W             &kp E         &kp R                        &kp T                                        &kp Y                         &kp U  &kp I      &kp O    &kp P
-&kp A             &kp S             &kp D         &kp F                        &kp G        &trans             &kp MINUS    &kp H                         &kp J  &kp K      &kp L    &kp MINUS
+&kp A             &kp S             &kp D         &kp F                        &kp G        &trans             &kp SEMI     &kp H                         &kp J  &kp K      &kp L    &kp MINUS
 &mt LEFT_SHIFT Z  &kp X             &kp C         &kp V                        &kp B        &kp BACKSPACE      &kp DELETE   &kp N                         &kp M  &kp COMMA  &kp DOT  &mt RIGHT_SHIFT SLASH
 &kp TAB           &kp LEFT_CONTROL  &kp LEFT_ALT  &mt LEFT_COMMAND LANGUAGE_2  &lt 2 SPACE  &lt 3 ENTER        &lt 4 ENTER  &mt RIGHT_COMMAND LANGUAGE_1                             &kp RIGHT_CONTROL
             >;
@@ -120,7 +120,7 @@
 
         move {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &kp LG(LEFT)   &trans    &kp UP    &trans     &kp PG_UP
+&trans  &trans  &trans  &trans  &trans                      &kp LG(LEFT)   &kp HOME  &kp UP    &kp END    &kp PG_UP
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp LG(RIGHT)  &kp LEFT  &kp DOWN  &kp RIGHT  &kp PG_DN
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans         &trans    &trans    &trans     &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &mo 5                                         &trans
