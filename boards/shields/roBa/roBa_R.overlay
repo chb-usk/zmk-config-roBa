@@ -24,11 +24,17 @@
         track-remainders;
     };
 
+    tb_temp_layer: tb_temp_layer {
+        compatible = "zmk,input-processor-temp-layer";
+        #input-processor-cells = <2>;
+        excluded-positions = <6 8 18 19 20 21 30 32>;
+    };
+
     trackball_listener {
         status = "okay";
         compatible = "zmk,input-listener";
         device = <&trackball>;
-        input-processors = <&tb_scaler 2 1>;
+        input-processors = <&tb_scaler 2 1>, <&tb_temp_layer 6 5000>;
     };
 };
 
