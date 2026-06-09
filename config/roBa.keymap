@@ -112,8 +112,8 @@
         move {
             label = "Move";
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &kp LG(LEFT)   &kp HOME  &kp UP    &kp END    &kp PG_UP
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp LG(RIGHT)  &kp LEFT  &kp DOWN  &kp RIGHT  &kp PG_DN
+&trans  &trans  &trans  &trans  &trans                      &kp LA(LEFT)   &kp HOME  &kp UP    &kp END    &kp PG_UP
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &kp LA(RIGHT)  &kp LEFT  &kp DOWN  &kp RIGHT  &kp PG_DN
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans         &trans    &trans    &trans     &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &mo 5                                         &trans
             >;
@@ -134,10 +134,10 @@
         MOUSE {
             label = "Mouse";
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &kp PAGE_UP           &trans    &kp PAGE_DOWN  &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1              &mkp MB3  &mkp MB2       &mo 7
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &kp LG(LEFT_BRACKET)  &trans    &kp LG(RBKT)   &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                                 &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &kp PAGE_UP   &trans    &kp PAGE_DOWN  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1      &mkp MB3  &mkp MB2       &mo 7
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &kp LA(LEFT)  &trans    &kp LA(RIGHT)  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                         &trans
             >;
         };
 
