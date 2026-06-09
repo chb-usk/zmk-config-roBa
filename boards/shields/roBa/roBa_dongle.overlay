@@ -51,7 +51,7 @@
 &trackball_listener {
     status = "okay";
     device = <&tb_split>;
-    input-processors = <&tb_scaler 2 1>, <&tb_temp_layer 6 5000>;
+    input-processors = <&tb_scaler 3 2>, <&tb_temp_layer 6 5000>;
 
     scroll {
         layers = <7>;
