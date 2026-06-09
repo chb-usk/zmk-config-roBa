@@ -20,11 +20,6 @@
         ;
 };
 
-/* Layer 7 (SCROLL): convert trackball movement to scroll events */
-&trackball {
-    scroll-layers = <7>;
-};
-
 /* Forward trackball raw events to dongle via split input (reg=0) */
 &tb_split {
     status = "okay";

@@ -6,6 +6,7 @@
  */
 #include "roBa.dtsi"
 #include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <input/processors.dtsi>
 
 / {
     chosen {
@@ -40,17 +41,20 @@
 /* Redirect physical layout kscan so ZMK / Studio uses the mock kscan */
 &roba_physical_layout { kscan = <&mock_kscan>; };
 
-/* Receive trackball data forwarded from the right peripheral.
- * scroll-layers here runs on the central (dongle) which has the keymap,
- * so layer state detection works correctly. */
+/* Receive trackball data forwarded from the right peripheral */
 &tb_split {
     status = "okay";
-    scroll-layers = <7>;
 };
 
-/* Enable listener on dongle: scale movement then auto-activate MOUSE layer (6) */
+/* Enable listener on dongle: scale movement + auto-activate MOUSE layer (6).
+ * When SCROLL layer (7) is active, remap XY motion to wheel scroll events. */
 &trackball_listener {
     status = "okay";
     device = <&tb_split>;
     input-processors = <&tb_scaler 2 1>, <&tb_temp_layer 6 5000>;
+
+    scroll {
+        layers = <7>;
+        input-processors = <&zip_xy_scaler 1 16>, <&zip_xy_to_scroll_mapper>;
+    };
 };
