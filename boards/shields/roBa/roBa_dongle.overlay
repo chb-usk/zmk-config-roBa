@@ -40,9 +40,12 @@
 /* Redirect physical layout kscan so ZMK / Studio uses the mock kscan */
 &roba_physical_layout { kscan = <&mock_kscan>; };
 
-/* Receive trackball data forwarded from the right peripheral */
+/* Receive trackball data forwarded from the right peripheral.
+ * scroll-layers here runs on the central (dongle) which has the keymap,
+ * so layer state detection works correctly. */
 &tb_split {
     status = "okay";
+    scroll-layers = <7>;
 };
 
 /* Enable listener on dongle: scale movement then auto-activate MOUSE layer (6) */
