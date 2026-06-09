@@ -6,6 +6,8 @@
  */
 #include "roBa.dtsi"
 #include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <dt-bindings/zmk/input_transform.h>
+#include <input/processors.dtsi>
 
 / {
     chosen {
@@ -45,9 +47,15 @@
     status = "okay";
 };
 
-/* Enable listener on dongle: scale movement then auto-activate MOUSE layer (6) */
+/* Enable listener on dongle: scale movement + auto-activate MOUSE layer (6).
+ * When SCROLL layer (7) is active, remap XY motion to wheel scroll events. */
 &trackball_listener {
     status = "okay";
     device = <&tb_split>;
-    input-processors = <&tb_scaler 2 1>, <&tb_temp_layer 6 5000>;
+    input-processors = <&tb_scaler 3 2>, <&tb_temp_layer 6 5000>;
+
+    scroll {
+        layers = <7>;
+        input-processors = <&zip_xy_scaler 1 16>, <&zip_xy_to_scroll_mapper>, <&zip_scroll_transform INPUT_TRANSFORM_Y_INVERT>;
+    };
 };
