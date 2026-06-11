@@ -94,18 +94,39 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
 
     # ── field_layout.c: LVGL v9 draw layer API → v8 draw context API ─────────
     # v9: lv_event_get_layer() → lv_layer_t*; lv_draw_line(layer, &dsc) with
-    #     embedded p1/p2 in descriptor.
+    #     p1/p2 embedded in the descriptor struct.
     # v8: lv_event_get_draw_ctx() → lv_draw_ctx_t*; lv_draw_line(ctx, &dsc, &p1, &p2)
-    #     with points as separate lv_point_t arguments.
+    #     with points passed as separate lv_point_t* arguments.
+    # Use five single-line replaces (no multi-line matching) for robustness.
     file(READ "${_PSRC}/field_layout.c" _FL)
     string(REPLACE
-        "    lv_layer_t *layer = lv_event_get_layer(e);"
-        "    lv_draw_ctx_t *draw_ctx = lv_event_get_draw_ctx(e);"
+        "lv_layer_t *layer = lv_event_get_layer(e);"
+        "lv_draw_ctx_t *draw_ctx = lv_event_get_draw_ctx(e);"
         _FL "${_FL}"
     )
     string(REPLACE
-        "            line_dsc.p1.x = obj_x1 + cx - dx;\n            line_dsc.p1.y = obj_y1 + cy - dy;\n            line_dsc.p2.x = obj_x1 + cx + dx;\n            line_dsc.p2.y = obj_y1 + cy + dy;\n\n            lv_draw_line(layer, &line_dsc);"
-        "            lv_point_t _p1 = {.x = obj_x1 + cx - dx, .y = obj_y1 + cy - dy};\n            lv_point_t _p2 = {.x = obj_x1 + cx + dx, .y = obj_y1 + cy + dy};\n            lv_draw_line(draw_ctx, &line_dsc, &_p1, &_p2);"
+        "line_dsc.p1.x = obj_x1 + cx - dx;"
+        "lv_point_t _p1 = {0}, _p2 = {0}; _p1.x = obj_x1 + cx - dx;"
+        _FL "${_FL}"
+    )
+    string(REPLACE
+        "line_dsc.p1.y = obj_y1 + cy - dy;"
+        "_p1.y = obj_y1 + cy - dy;"
+        _FL "${_FL}"
+    )
+    string(REPLACE
+        "line_dsc.p2.x = obj_x1 + cx + dx;"
+        "_p2.x = obj_x1 + cx + dx;"
+        _FL "${_FL}"
+    )
+    string(REPLACE
+        "line_dsc.p2.y = obj_y1 + cy + dy;"
+        "_p2.y = obj_y1 + cy + dy;"
+        _FL "${_FL}"
+    )
+    string(REPLACE
+        "lv_draw_line(layer, &line_dsc);"
+        "lv_draw_line(draw_ctx, &line_dsc, &_p1, &_p2);"
         _FL "${_FL}"
     )
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/field_layout.c" "${_FL}")
