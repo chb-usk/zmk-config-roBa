@@ -54,6 +54,14 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
     string(REPLACE "lv_indev_active()" "lv_indev_get_act()" _CSS "${_CSS}")
     # lv_obj_send_event (v9) → lv_event_send (v8)
     string(REPLACE "lv_obj_send_event(" "lv_event_send(" _CSS "${_CSS}")
+    # bootmode_set() requires CONFIG_RETENTION_BOOT_MODE + retained memory DTS.
+    # Replace the include with an inline stub so it compiles without the retention
+    # subsystem.  The bootloader button will fail gracefully (LOG_ERR + return).
+    string(REPLACE
+        "#include <zephyr/retention/bootmode.h>  /* For bootmode_set() - Zephyr 4.x bootloader entry */"
+        "/* bootmode stub: retention not configured for ZMK v0.3 */\nstatic inline int bootmode_set(uint8_t m) { ARG_UNUSED(m); return -ENOTSUP; }\n#define BOOT_MODE_TYPE_BOOTLOADER 1"
+        _CSS "${_CSS}"
+    )
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/custom_status_screen.c" "${_CSS}")
     set_source_files_properties(
         "${_PSRC}/custom_status_screen.c"
