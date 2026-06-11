@@ -6,6 +6,8 @@ manifest:
       url-base: https://github.com/kumamuk-git
     - name: happy-ryo
       url-base: https://github.com/happy-ryo
+    - name: prospector
+      url-base: https://github.com/t-ogura
   projects:
     - name: zmk
       remote: zmkfirmware
@@ -15,7 +17,7 @@ manifest:
       remote: kumamuk-git
       revision: main
     - name: prospector-zmk-module
-      remote: happy-ryo
-      revision: main
+      remote: prospector
+      revision: v1.1.1
   self:
     path: config
