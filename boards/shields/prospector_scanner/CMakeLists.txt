@@ -73,4 +73,15 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
     )
     target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/hello_widget.c")
 
+    # ── system_settings_widget.c: lv_malloc/lv_free → lv_mem_alloc/lv_mem_free
+    file(READ "${_PSRC}/system_settings_widget.c" _SSW)
+    string(REPLACE "lv_malloc(" "lv_mem_alloc(" _SSW "${_SSW}")
+    string(REPLACE "lv_free(" "lv_mem_free(" _SSW "${_SSW}")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/system_settings_widget.c" "${_SSW}")
+    set_source_files_properties(
+        "${_PSRC}/system_settings_widget.c"
+        PROPERTIES HEADER_FILE_ONLY TRUE
+    )
+    target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/system_settings_widget.c")
+
 endif()
