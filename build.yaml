@@ -27,6 +27,11 @@ include:
     snippet: studio-rpc-usb-uart
     artifact-name: roBa_dongle_xiao
 
+  # ── Prospector scanner (v2.0.0 — standalone XIAO BLE + ST7789V display) ──
+  - board: seeeduino_xiao_ble
+    shield: prospector_scanner
+    artifact-name: prospector_scanner
+
   # ── Utility ───────────────────────────────────────────────────────────────
   - board: seeeduino_xiao_ble
     shield: settings_reset
