@@ -86,14 +86,14 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
     set_property(GLOBAL APPEND PROPERTY _PROSPECTOR_SRCS_TO_REMOVE "${_PSRC}/field_layout.c")
 
     # Defer removal of upstream originals to after the prospector module has
-    # added them via target_sources_ifdef().  We use DIRECTORY CMAKE_SOURCE_DIR
-    # so this runs at the very end of the top-level CMakeLists.txt, after all
-    # module and shield include()s have completed.
+    # added them via target_sources_ifdef().
+    message(STATUS "PROSPECTOR_PATCH: shield CMakeLists.txt processed, CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}")
     cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}" CALL
         cmake_language EVAL CODE [=[
             get_property(_prm GLOBAL PROPERTY _PROSPECTOR_SRCS_TO_REMOVE)
+            get_target_property(_srcs app SOURCES)
+            message(STATUS "PROSPECTOR_PATCH: DEFERRED ran, removing ${_prm}")
             if(_prm)
-                get_target_property(_srcs app SOURCES)
                 list(REMOVE_ITEM _srcs ${_prm})
                 set_target_properties(app PROPERTIES SOURCES "${_srcs}")
             endif()
