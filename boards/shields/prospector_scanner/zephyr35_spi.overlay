@@ -1,13 +1,11 @@
 /*
- * Zephyr 3.5.0 (ZMK v0.3-branch) compatibility overlay for prospector_scanner.
+ * Applied via EXTRA_DTC_OVERLAY_FILE (after all shield overlays) to replace
+ * the Zephyr 4.x MIPI DBI ST7789V node with a direct SPI node for Zephyr 3.5.0.
  *
- * prospector-zmk-module v2.2.1 targets Zephyr 4.x which has MIPI DBI support
- * (CONFIG_MIPI_DBI, zephyr,mipi-dbi-spi compatible). Zephyr 3.5.0 lacks that
- * subsystem: the ST7789V must be defined directly under an SPI bus using the
- * older sitronix,st7789v binding (cmd-data-gpios instead of dc-gpios on parent).
- *
- * The module's prospector_scanner.overlay creates /mipi_dbi/st7789v@0.
- * This overlay removes that node and adds st7789v directly under spi3.
+ * prospector-zmk-module v2.2.1 defines /mipi_dbi/st7789v@0 using the
+ * "zephyr,mipi-dbi-spi" compatible (Zephyr 3.6+). Zephyr 3.5.0 lacks that
+ * subsystem; the ST7789V driver uses SPI_DT_SPEC_INST_GET which requires the
+ * device to be a direct child of an SPI bus.
  */
 
 /delete-node/ &{/mipi_dbi};
@@ -21,7 +19,7 @@
 		height = <240>;
 		x-offset = <20>;
 		y-offset = <0>;
-		/* DC pin: active low selects command mode (D/CX LOW = command) */
+		/* DC pin: active low = command mode (D/CX LOW = command on ST7789V) */
 		cmd-data-gpios = <&xiao_d 7 GPIO_ACTIVE_LOW>;
 		reset-gpios = <&xiao_d 3 GPIO_ACTIVE_LOW>;
 		vcom = <0x19>;

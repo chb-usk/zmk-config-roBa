@@ -13,6 +13,13 @@ endif()
 # Strategy: generate patched source files into CMAKE_BINARY_DIR, add them to
 # app immediately, and defer removal of the upstream originals to the very end
 # of CMAKE_SOURCE_DIR processing (after the prospector shield cmake has run).
+# Apply this LAST (after shield overlays) so /delete-node/ &{/mipi_dbi} works.
+# EXTRA_DTC_OVERLAY_FILE is appended after shield_dts_files by dts.cmake.
+if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR)
+    list(APPEND EXTRA_DTC_OVERLAY_FILE
+        "${CMAKE_CURRENT_LIST_DIR}/boards/shields/prospector_scanner/zephyr35_spi.overlay")
+endif()
+
 if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR)
     set(_PSRC "${ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR}/boards/shields/prospector_scanner/src")
     set(_MSRC "${ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR}/src")
