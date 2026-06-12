@@ -4,24 +4,34 @@
 # ZMK v0.3-branch ships Zephyr 4.1.0 / LVGL v8.3.
 #
 # Strategy: read upstream source files, apply string replacements, write
-# patched copies to CMAKE_CURRENT_BINARY_DIR, mark originals HEADER_FILE_ONLY,
-# and compile the patched copies instead.  This avoids CMake directory-scope
-# issues that prevent set_source_files_properties(COMPILE_OPTIONS) from working
-# on files owned by a different module's cmake scope.
+# patched copies to CMAKE_CURRENT_BINARY_DIR, remove the originals from the
+# app target's SOURCES list, and compile the patched copies instead.
+#
+# NOTE: set_source_files_properties(HEADER_FILE_ONLY) is directory-scoped and
+# does NOT suppress compilation of files added by a different module's CMake
+# scope.  Directly mutating the target's SOURCES property is the only reliable
+# way to exclude those files.
 
 if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR)
     set(_PSRC
         "${ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR}/boards/shields/prospector_scanner/src"
     )
 
+    # Remove _orig from app SOURCES and replace with _patched.
+    macro(prospector_replace_source _orig _patched)
+        get_target_property(_app_srcs app SOURCES)
+        list(REMOVE_ITEM _app_srcs "${_orig}")
+        set_target_properties(app PROPERTIES SOURCES "${_app_srcs}")
+        target_sources(app PRIVATE "${_patched}")
+    endmacro()
+
     # ── radii_layout.c: replace with v8-compatible version ────────────────────
     # The upstream file uses LVGL v9 canvas layer API (lv_canvas_init_layer,
     # lv_draw_line on a layer, lv_image_* widget names).  Our replacement
     # rewrites these with the LVGL v8 equivalents.
-    set_source_files_properties(
-        "${_PSRC}/radii_layout.c"
-        PROPERTIES HEADER_FILE_ONLY TRUE
-    )
+    get_target_property(_app_srcs app SOURCES)
+    list(REMOVE_ITEM _app_srcs "${_PSRC}/radii_layout.c")
+    set_target_properties(app PROPERTIES SOURCES "${_app_srcs}")
     if(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
         target_sources(app PRIVATE "${CMAKE_CURRENT_LIST_DIR}/src/radii_layout.c")
     endif()
@@ -36,11 +46,7 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
         _TC "${_TC}"
     )
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/touch_handler.c" "${_TC}")
-    set_source_files_properties(
-        "${_PSRC}/touch_handler.c"
-        PROPERTIES HEADER_FILE_ONLY TRUE
-    )
-    target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/touch_handler.c")
+    prospector_replace_source("${_PSRC}/touch_handler.c" "${CMAKE_CURRENT_BINARY_DIR}/touch_handler.c")
 
     # ── custom_status_screen.c: LVGL v9 → v8 API renames ─────────────────────
     file(READ "${_PSRC}/custom_status_screen.c" _CSS)
@@ -63,11 +69,7 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
         _CSS "${_CSS}"
     )
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/custom_status_screen.c" "${_CSS}")
-    set_source_files_properties(
-        "${_PSRC}/custom_status_screen.c"
-        PROPERTIES HEADER_FILE_ONLY TRUE
-    )
-    target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/custom_status_screen.c")
+    prospector_replace_source("${_PSRC}/custom_status_screen.c" "${CMAKE_CURRENT_BINARY_DIR}/custom_status_screen.c")
 
     # ── hello_widget.c: lv_malloc/lv_free → lv_mem_alloc/lv_mem_free ─────────
     # LVGL v9 introduced lv_malloc/lv_free; v8 uses lv_mem_alloc/lv_mem_free.
@@ -75,22 +77,14 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
     string(REPLACE "lv_malloc(" "lv_mem_alloc(" _HW "${_HW}")
     string(REPLACE "lv_free(" "lv_mem_free(" _HW "${_HW}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/hello_widget.c" "${_HW}")
-    set_source_files_properties(
-        "${_PSRC}/hello_widget.c"
-        PROPERTIES HEADER_FILE_ONLY TRUE
-    )
-    target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/hello_widget.c")
+    prospector_replace_source("${_PSRC}/hello_widget.c" "${CMAKE_CURRENT_BINARY_DIR}/hello_widget.c")
 
     # ── system_settings_widget.c: lv_malloc/lv_free → lv_mem_alloc/lv_mem_free
     file(READ "${_PSRC}/system_settings_widget.c" _SSW)
     string(REPLACE "lv_malloc(" "lv_mem_alloc(" _SSW "${_SSW}")
     string(REPLACE "lv_free(" "lv_mem_free(" _SSW "${_SSW}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/system_settings_widget.c" "${_SSW}")
-    set_source_files_properties(
-        "${_PSRC}/system_settings_widget.c"
-        PROPERTIES HEADER_FILE_ONLY TRUE
-    )
-    target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/system_settings_widget.c")
+    prospector_replace_source("${_PSRC}/system_settings_widget.c" "${CMAKE_CURRENT_BINARY_DIR}/system_settings_widget.c")
 
     # ── field_layout.c: LVGL v9 draw layer API → v8 draw context API ─────────
     # v9: lv_event_get_layer() → lv_layer_t*; lv_draw_line(layer, &dsc) with
@@ -130,10 +124,6 @@ if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MOD
         _FL "${_FL}"
     )
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/field_layout.c" "${_FL}")
-    set_source_files_properties(
-        "${_PSRC}/field_layout.c"
-        PROPERTIES HEADER_FILE_ONLY TRUE
-    )
-    target_sources(app PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/field_layout.c")
+    prospector_replace_source("${_PSRC}/field_layout.c" "${CMAKE_CURRENT_BINARY_DIR}/field_layout.c")
 
 endif()
