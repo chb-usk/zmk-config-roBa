@@ -15,8 +15,22 @@ endif()
 # of CMAKE_SOURCE_DIR processing (after the prospector shield cmake has run).
 if(CONFIG_SHIELD_PROSPECTOR_SCANNER AND DEFINED ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR)
     set(_PSRC "${ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR}/boards/shields/prospector_scanner/src")
+    set(_MSRC "${ZEPHYR_PROSPECTOR_ZMK_MODULE_MODULE_DIR}/src")
     set(_PBIN "${CMAKE_BINARY_DIR}/prospector_patches")
     set(_LSRC "${CMAKE_CURRENT_LIST_DIR}/boards/shields/prospector_scanner/src")
+
+    # ── status_scanner.c: zephyr/net_buf.h → zephyr/net/buf.h ────────────────
+    # Zephyr 3.5.0+zmk-fixes doesn't have the flat zephyr/net_buf.h shim;
+    # the header lives at zephyr/net/buf.h in this version.
+    file(READ "${_MSRC}/status_scanner.c" _SS)
+    string(REPLACE
+        "#include <zephyr/net_buf.h>"
+        "#include <zephyr/net/buf.h>"
+        _SS "${_SS}"
+    )
+    file(WRITE "${_PBIN}/status_scanner.c" "${_SS}")
+    target_sources(app PRIVATE "${_PBIN}/status_scanner.c")
+    set_property(GLOBAL APPEND PROPERTY _PROSPECTOR_SRCS_TO_REMOVE "${_MSRC}/status_scanner.c")
 
     # ── radii_layout.c: local v8-compatible replacement ───────────────────────
     if(CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM)
